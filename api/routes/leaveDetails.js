@@ -7,7 +7,7 @@ router.get('/', (req, res, next) => {
     LeaveDetails.find()
         .exec()
         .then(docs => {
-            console.log(docs);
+            // console.log(docs);
             res.status(201).json({
                 message: 'found the Leaves',
                 Leaves: docs
@@ -30,37 +30,51 @@ router.get('/:id', (req, res, next) => {
 })
 router.post('/', (req, res, next) => {
     console.log(req.body);
-
-    for (i = 0; i < req.body.length; i++) {
-        const leaveDetails = new LeaveDetails({
-            _id: new mongoose.Types.ObjectId(),
-            leaveDate: req.body[i].leaveDate,
-            compOff: req.body[i].compOff,
-        })
-        leaveDetails.save()
-            .then(
-                result => {
-                    console.log(result);
-                    res.status(201).json({
-                        message: 'Leave Details saved Successfully',
-                        CreatedTask: result,
-                        request: {
-                            type: 'GET',
-                            URl: 'http://localhost:8000/leaveDetails/' + result.id
-                        }
-                    });
-                }
-            )
-            .catch(
-                err => {
-                    console.log(err);
-                    res.status(500).json({
-                        error: err
-                    });
-                }
-            )
+    async function handlePost(req) {
+        var finalresult = [];
+        for (i = 0; i < req.body.length; i++) {
+            // try {
+            const leaveDetails = new LeaveDetails({
+                _id: new mongoose.Types.ObjectId(),
+                leaveDate: req.body[i].leaveDate,
+                compOff: req.body[i].compOff,
+            })
+            await leaveDetails.save()
+                .then(
+                    result => {
+                        finalresult.push(result);
+                        console.log("result array 1", finalresult);
+                    }
+                )
+            // }
+            // catch (error) {
+            // console.log("error in for loop", error);
+            // }
+        }
+        console.log("result array 2", finalresult);
+        return finalresult;
     }
-});
+    handlePost(req)
+        .then(finalresult => {
+            console.log("result array 3", finalresult);
+            res.status(201).json({
+                message: 'Leave Details saved Successfully',
+                CreatedLeaves: finalresult,
+                request: {
+                    type: 'GET',
+                    URl: 'http://localhost:8000/leaveDetails/'
+                }
+            })
+        })
+        .catch(
+            err => {
+                console.log(err);
+                res.status(500).json({
+                    error: err
+                });
+            }
+        )
+})
 router.delete('/:id', (req, res, next) => {
     const id = req.params.id;
     LeaveDetails.deleteOne({ _id: id })
