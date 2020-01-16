@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/order');
@@ -15,7 +16,7 @@ const uri = 'mongodb+srv://admin:' + process.env.MONGO_ATLAS_PW + '@stats-ieo8c.
 
 const options = { useNewUrlParser: true, useUnifiedTopology: true, useUnifiedTopology: true };
 
-mongoose.connect(uri, options);
+mongoose.connect(process.env.MONGODB_URI || uri, options);
 mongoose.Promise = global.Promise;
 app.use(cors());
 app.use(morgan('dev'));
