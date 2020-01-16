@@ -33,7 +33,6 @@ router.post('/', (req, res, next) => {
     async function handlePost(req) {
         var finalresult = [];
         for (i = 0; i < req.body.length; i++) {
-            // try {
             const leaveDetails = new LeaveDetails({
                 _id: new mongoose.Types.ObjectId(),
                 leaveDate: req.body[i].leaveDate,
@@ -46,10 +45,6 @@ router.post('/', (req, res, next) => {
                         console.log("result array 1", finalresult);
                     }
                 )
-            // }
-            // catch (error) {
-            // console.log("error in for loop", error);
-            // }
         }
         console.log("result array 2", finalresult);
         return finalresult;
@@ -75,11 +70,16 @@ router.post('/', (req, res, next) => {
             }
         )
 })
-router.delete('/:id', (req, res, next) => {
-    const id = req.params.id;
-    LeaveDetails.deleteOne({ _id: id })
+router.delete('/', (req, res, next) => {
+    let ids = [];
+    for (const [key, value] of Object.entries(req.query)) {
+        ids.push(value);
+    };
+    const query = { '_id': { $in: ids } };
+    LeaveDetails.deleteMany(query)
         .exec()
         .then(result => {
+            console.log('count: ', result.deletedCount);
             res.status(200).json({
                 message: 'Leave deleted',
                 result: result,
