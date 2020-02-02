@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const LeaveDetails = require('..//.//models/leaveDetails');
+const checkAuth = require('../middleware/check-auth');
+
 
 router.get('/', (req, res, next) => {
     LeaveDetails.find()
@@ -28,7 +30,7 @@ router.get('/:id', (req, res, next) => {
         }
         )
 })
-router.post('/', (req, res, next) => {
+router.post('/',checkAuth, (req, res, next) => {
     console.log(req.body);
     async function handlePost(req) {
         var finalresult = [];

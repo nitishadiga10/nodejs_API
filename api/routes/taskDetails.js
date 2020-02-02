@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const TaskDetails = require('..//.//models/tasksDetails');
+const checkAuth = require('../middleware/check-auth');
 
 router.get('/', (req, res, next) => {
     TaskDetails.find()
         .exec()
         .then(docs => {
-            console.log(docs);
+            // console.log(docs);
             res.status(201).json({
                 message: 'found the tasks',
                 tasks: docs
@@ -28,7 +29,7 @@ router.get('/:id', (req, res, next) => {
         }
         )
 })
-router.post('/', (req, res, next) => {
+router.post('/',checkAuth, (req, res, next) => {
     console.log(req.body);
     const tasksDetails = new TaskDetails({
         _id: new mongoose.Types.ObjectId(),

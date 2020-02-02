@@ -118,6 +118,7 @@ router.post('/login', (req, res, next) => {
 
 });
 router.post('/signup', (req, res, next) => {
+    console.log('user data:' , req.body);
     User.find({ email: req.body.email }) //check if email already exists on the database
         .exec()
         .then(user => {
@@ -136,6 +137,8 @@ router.post('/signup', (req, res, next) => {
                         const user = new User({
                             _id: new mongoose.Types.ObjectId(),
                             email: req.body.email,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
                             password: hash
                         })
                         user.save().then(
